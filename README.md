@@ -1,6 +1,6 @@
 # About The Project
 
-This project sets up a very simple single-user budgeting application. Users are able to track income, expenses, and savings goals. This project uses the Streamlit framework for the user interface and an SQLite database to persist the data.
+This project sets up a very simple single-user budgeting application. Users are able to track income, expenses, and savings goals. This project uses the Streamlit framework for the user interface and an SQLite database to persist the data. The Pandas module is used to read SQL queries.
 
 # Setup and Installation
 
