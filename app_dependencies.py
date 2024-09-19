@@ -5,6 +5,14 @@ from uuid import uuid4
 from datetime import date
 import json
 
+def db_conn(stmt: str):
+    conn = sqlite3.connect('budget_application.db')
+    c = conn.cursor()
+    c.execute('PRAGMA foreign_keys = ON')
+    c.execute(stmt)
+    conn.commit()
+    conn.close()
+
 class Endpoint():
     
     def __init__(self):
@@ -27,24 +35,16 @@ class Endpoint():
     
     def delete_one(self, searched: str):
         try:
-            conn = sqlite3.connect('budget_application.db')
-            c = conn.cursor()
-            c.execute('PRAGMA foreign_keys = ON')
-            c.execute(f"DELETE FROM {self.table} WHERE {self.id_col} = '{searched}'")
-            conn.commit()
-            conn.close()
+            stmt = f"DELETE FROM {self.table} WHERE {self.id_col} = '{searched}'"
+            db_conn(stmt)
             return {'detail': 'entry deleted'}
         except:
             return {'detail': 'entry not found'} 
 
     def delete_all(self):
         try:
-            conn = sqlite3.connect('budget_application.db')
-            c = conn.cursor()
-            c.execute('PRAGMA foreign_keys = ON')
-            c.execute(f"DELETE FROM {self.table}")
-            conn.commit()
-            conn.close()
+            stmt = f"DELETE FROM {self.table}"
+            db_conn(stmt)
             return {'detail': 'all entries deleted'}
         except:
             return {'detail': 'no entries found'} 
@@ -52,12 +52,8 @@ class Endpoint():
     def post(self, data: CategoryBase | GoalBase | RecordBase):
         try: 
             values = tuple(data.model_dump().values())
-            conn = sqlite3.connect('budget_application.db')
-            c = conn.cursor()
-            c.execute('PRAGMA foreign_keys = ON')
-            c.execute(f"INSERT INTO {self.table} VALUES {values}")
-            conn.commit()
-            conn.close()
+            stmt = f"INSERT INTO {self.table} VALUES {values}"
+            db_conn(stmt)
             return {'detail': 'entry posted'}
         except sqlite3.IntegrityError:
             return {'detail': 'entry already exists'}
@@ -70,13 +66,9 @@ class CategoriesEndpoint(Endpoint):
 
     def update(self, searched: str, updates: CategoryBase):
         if searched in pd.DataFrame(self.get_all())['category'].to_list():
-            conn = sqlite3.connect('budget_application.db')
-            c = conn.cursor()
             values = tuple(updates.model_dump().values())
-            c.execute('PRAGMA foreign_keys = ON')
-            c.execute(f"UPDATE {self.table} SET category = '{values[0]}', income_cat = {values[1]} WHERE category = '{searched}'")
-            conn.commit()
-            conn.close()
+            stmt = f"UPDATE {self.table} SET category = '{values[0]}', income_cat = {values[1]} WHERE category = '{searched}'"
+            db_conn(stmt)
             return {'detail': 'entry updated'}
         return {'detail': 'entry not found'}
 
@@ -88,13 +80,9 @@ class GoalsEndpoint(Endpoint):
 
     def update(self, searched: str, updates: GoalBase):
         if searched in pd.DataFrame(self.get_all())['title'].to_list():
-            conn = sqlite3.connect('budget_application.db')
-            c = conn.cursor()
             values = tuple(updates.model_dump().values())
-            c.execute('PRAGMA foreign_keys = ON')
-            c.execute(f"UPDATE {self.table} SET title = '{values[0]}', amount = {values[1]}, priority = {values[2]} WHERE title = '{searched}'")
-            conn.commit()
-            conn.close()
+            stmt = f"UPDATE {self.table} SET title = '{values[0]}', amount = {values[1]}, priority = {values[2]} WHERE title = '{searched}'"
+            db_conn(stmt)
             return {'detail': 'entry updated'}
         return {'detail': 'entry not found'}
 
@@ -112,27 +100,19 @@ class RecordsEndpoint(Endpoint):
             to_post['description'] = 'None'
         values = tuple(to_post.values())
         try:
-            conn = sqlite3.connect('budget_application.db')
-            c = conn.cursor()
-            c.execute('PRAGMA foreign_keys = ON')
-            c.execute(f"INSERT INTO {self.table} VALUES {values}")
-            conn.commit()
-            conn.close()
+            stmt = f"INSERT INTO {self.table} VALUES {values}"
+            db_conn(stmt)
             return {'detail': 'entry posted'}
         except sqlite3.IntegrityError:
             return {'detail': 'category not found'}
         
     def update(self, searched: str, updates: RecordBase):
         if searched in pd.DataFrame(self.get_all())['record_id'].to_list():
-            conn = sqlite3.connect('budget_application.db')
-            c = conn.cursor()
             og = RecordBase(**self.get_one(searched))
             new = og.model_copy(update=updates.model_dump(exclude_unset=True))
             values = tuple(new.model_dump().values())
-            c.execute('PRAGMA foreign_keys = ON')
-            c.execute(f"UPDATE {self.table} SET record_id = '{values[0]}', date = '{values[1]}', category = '{values[2]}', description = '{values[3]}', amount = {values[4]} WHERE record_id = '{searched}'")
-            conn.commit()
-            conn.close()
+            stmt = f"UPDATE {self.table} SET record_id = '{values[0]}', date = '{values[1]}', category = '{values[2]}', description = '{values[3]}', amount = {values[4]} WHERE record_id = '{searched}'"
+            db_conn(stmt)
             return {'detail': 'entry updated'}
         return {'detail': 'entry not found'}
 
