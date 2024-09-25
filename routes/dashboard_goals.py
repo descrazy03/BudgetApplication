@@ -2,6 +2,16 @@ import streamlit as st
 import app_logic
 from app_dependencies import GoalBase, EndpointTable
 
+st.markdown(
+    r"""
+    <style>
+    .stDeployButton {
+            visibility: hidden;
+        }
+    </style>
+    """, unsafe_allow_html=True
+)
+
 #---goals page---
 st.title('Savings Goals')
 

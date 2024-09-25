@@ -3,6 +3,16 @@ import app_logic
 import altair as alt
 from datetime import date, timedelta
 
+st.markdown(
+    r"""
+    <style>
+    .stDeployButton {
+            visibility: hidden;
+        }
+    </style>
+    """, unsafe_allow_html=True
+)
+
 st.title("Dezzy's Budget App")
 
 #---main monthly summary section---

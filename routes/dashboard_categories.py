@@ -1,6 +1,17 @@
 import streamlit as st
 import app_logic
 from app_dependencies import CategoryBase, EndpointTable
+
+st.markdown(
+    r"""
+    <style>
+    .stDeployButton {
+            visibility: hidden;
+        }
+    </style>
+    """, unsafe_allow_html=True
+)
+
 import pandas as pd
 
 #---categories section---

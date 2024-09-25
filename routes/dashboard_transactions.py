@@ -2,6 +2,16 @@ import streamlit as st
 import app_logic
 from app_dependencies import RecordBase, EndpointTable
 
+st.markdown(
+    r"""
+    <style>
+    .stDeployButton {
+            visibility: hidden;
+        }
+    </style>
+    """, unsafe_allow_html=True
+)
+
 st.title('Transactions')
 st.header('All Transaction Records', divider=True)
 
