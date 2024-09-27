@@ -37,7 +37,7 @@ except:
 
 try:
     with goal_progress:
-        st.metric('Progress Towards Savings Goals', value=f"{abs(budget / total) * 100: .2f}%")
+        st.metric('Progress Towards Savings Goals', value=f"{(budget / total) * 100: .2f}%")
 except:
     with goal_progress:
         st.metric('Progress Towards Savings Goals', value=f"{0: .2f}%")
